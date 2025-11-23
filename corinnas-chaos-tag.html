@@ -2,8 +2,10 @@
 <html lang="de">
 <head>
     <meta charset="UTF-8">
-    <title>Corinnas Chaos-Tag</title>
+    <title>Corinnas ewiger Fail-Tag – Horror Edition</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
     <style>
         :root {
             font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
@@ -13,12 +15,12 @@
         body {
             margin: 0;
             padding: 0;
-            background: #111;
-            color: #f5f5f5;
+            background: #020617;
+            color: #f9fafb;
         }
 
         #app {
-            max-width: 700px;
+            max-width: 720px;
             margin: 0 auto;
             padding: 16px;
         }
@@ -31,14 +33,14 @@
 
         #story {
             border-radius: 8px;
-            border: 1px solid #444;
+            border: 1px solid #4b5563;
             padding: 12px;
-            min-height: 220px;
-            max-height: 320px;
+            min-height: 260px;
+            max-height: 380px;
             overflow-y: auto;
             white-space: pre-line;
             font-size: 0.95rem;
-            background: #181818;
+            background: #020617;
         }
 
         .buttons {
@@ -67,17 +69,18 @@
             cursor: default;
         }
 
-        #stats {
-            margin-top: 10px;
-            font-size: 0.9rem;
-            color: #d1d5db;
-        }
-
         #shareBtn,
         #copyBtn,
         #downloadBtn {
             width: 100%;
             margin-top: 8px;
+        }
+
+        #sceneInfo {
+            margin-top: 8px;
+            font-size: 0.85rem;
+            color: #9ca3af;
+            text-align: right;
         }
 
         @media (prefers-color-scheme: light) {
@@ -90,9 +93,10 @@
 </head>
 <body>
 <div id="app">
-    <h1>Corinnas Chaos-Tag</h1>
+    <h1>Corinnas ewiger Fail-Tag – Horror Edition</h1>
 
     <div id="story"></div>
+    <div id="sceneInfo"></div>
 
     <div class="buttons">
         <button id="choice1"></button>
@@ -100,55 +104,24 @@
         <button id="choice3"></button>
     </div>
 
-    <div id="stats"></div>
-
     <button id="shareBtn" class="secondary">Ergebnis teilen (Discord / WhatsApp …)</button>
     <button id="copyBtn" class="secondary">Ergebnis in Zwischenablage kopieren</button>
     <button id="downloadBtn" class="secondary">Ergebnis als TXT herunterladen</button>
 </div>
 
 <script>
-    const storyEl = document.getElementById("story");
-    const choice1Btn = document.getElementById("choice1");
-    const choice2Btn = document.getElementById("choice2");
-    const choice3Btn = document.getElementById("choice3");
-    const statsEl = document.getElementById("stats");
-    const shareBtn = document.getElementById("shareBtn");
-    const copyBtn = document.getElementById("copyBtn");
-    const downloadBtn = document.getElementById("downloadBtn");
+    let storyEl, sceneInfoEl,
+        choice1Btn, choice2Btn, choice3Btn,
+        shareBtn, copyBtn, downloadBtn;
 
     const state = {
-        coolness: 0,
-        peinlichkeit: 0,
-        sympathie: 0,
-        energie: 5,
-        log: [],
-        currentScene: 0, // 0 Intro, 1-4 Szenen, -1 Ende
-        gameOver: false
+        currentScene: 0, // 0 = Intro, 1–6 Szenen, -1 = Ende
+        log: []
     };
 
     function resetState() {
-        state.coolness = 0;
-        state.peinlichkeit = 0;
-        state.sympathie = 0;
-        state.energie = 5;
-        state.log = [];
         state.currentScene = 0;
-        state.gameOver = false;
-    }
-
-    function statsString(prefix = "Werte: ") {
-        return `${prefix}Coolness=${state.coolness}, Peinlichkeit=${state.peinlichkeit}, Sympathie=${state.sympathie}, Energie=${state.energie}`;
-    }
-
-    function updateStats() {
-        statsEl.textContent = statsString();
-    }
-
-    function checkGameOver() {
-        if (state.peinlichkeit >= 8 || state.energie <= -1) {
-            state.gameOver = true;
-        }
+        state.log = [];
     }
 
     function showIntro() {
@@ -158,105 +131,202 @@
         downloadBtn.disabled = true;
 
         storyEl.textContent =
-`=====================================
-      CORINNAS CHAOS-TAG
-      Ein kleines Textadventure
-=====================================
+`Willkommen bei Corinnas ewiger Fail-Tag – Horror Edition.
 
-Du spielst Corinna an einem völlig normalen Tag.
-Natürlich wird dieser Tag ALLES – nur nicht normal.
+Heute hat Corinna nicht nur Pech,
+sondern auch das Gefühl, dass irgendwas mit ihr spielt.
 
-Tippe auf "Spiel starten", um zu beginnen.`;
+Du entscheidest, was sie in ihren gruseligen
+und peinlichen Momenten macht.
 
-        choice1Btn.textContent = "Spiel starten";
-        choice1Btn.style.display = "block";
+Je nachdem, wofür du dich entscheidest,
+wirkt Corinna eher mutig, rational oder
+komplett \"ich kündige mein Leben\".
 
+Am Ende bekommst du eine Auswertung als Text.`;
+
+        sceneInfoEl.textContent = "";
+        choice1Btn.textContent = "Los geht’s";
         choice2Btn.style.display = "none";
         choice3Btn.style.display = "none";
-
-        updateStats();
     }
 
+    function showSceneInfo() {
+        if (state.currentScene >= 1 && state.currentScene <= 6) {
+            sceneInfoEl.textContent = `Szene ${state.currentScene} von 6`;
+        } else {
+            sceneInfoEl.textContent = "";
+        }
+    }
+
+    // --- Szenen mit Horror-Atmosphäre ---
+
+    // 1 – Dusch-Fail im Geisterbad
     function showScene1() {
         state.currentScene = 1;
         storyEl.textContent =
-`SZENE 1 – Der Morgen danach
----------------------------
-Corinna reißt die Augen auf.
-Ihr Handy zeigt: 07:43. Der Wecker war auf 06:30 gestellt – ups.
-Sie muss um 08:00 irgendwo sein. Irgendwo sehr Wichtiges.
-Nur… ihr Gehirn hat noch Ladebalken.
+`SZENE 1 – Dusch-Fail im Geisterbad
+-----------------------------------
+Es ist spät, Corinna duscht. Das Bad ist leicht beschlagen,
+alles ganz normal, bis das Licht kurz flackert.
 
-Was macht Corinna zuerst?`;
+Sie bleibt stehen.
 
-        choice1Btn.textContent = "1) Handy checken – vielleicht steht da, wo sie hin muss.";
-        choice2Btn.textContent = "2) Ins Bad sprinten – Hauptsache nicht komplett zerstört aussehen.";
-        choice3Btn.textContent = "3) Snooze drücken und hoffen, dass es nicht so wichtig ist.";
+Noch ein Flackern.
+Dann wird das Wasser plötzlich eiskalt,
+obwohl sie nichts verstellt hat.
 
-        choice1Btn.style.display = "block";
+Als sie den Duschvorhang zur Seite schieben will,
+spürt sie an ihrem Knöchel ganz kurz etwas Kaltes –
+als hätte sie jemand berührt. Nichts zu sehen.
+
+Der Vorhang bewegt sich einen Moment,
+obwohl kein Zug da ist.`;
+
+        choice1Btn.textContent = "1) Corinna ruft laut: \"Okay, wer auch immer hier rumspukt – ich bin nackt und genervt, such dir wen anders!\" und beendet die Dusche schnell.";
+        choice2Btn.textContent = "2) Corinna stellt das Wasser aus, atmet durch, macht das Licht an/aus und checkt alles logisch: Rohre, Fenster, Sicherung.";
+        choice3Btn.textContent = "3) Corinna ignoriert es, singt extra laut irgendein Lied, um sich selbst zu beruhigen, und tut so, als wäre nichts.";
+
         choice2Btn.style.display = "block";
         choice3Btn.style.display = "block";
 
-        state.log.push("SZENE 1 – Der Morgen danach");
-        state.log.push("Frage: Was macht Corinna zuerst?");
+        state.log.push("Szene 1 – Dusch-Fail im Geisterbad");
+        state.log.push("Frage: Wie reagiert Corinna, als das Bad plötzlich wie aus einem Horrorfilm wirkt?");
+        state.log.push("");
+        showSceneInfo();
     }
 
+    // 2 – Flurflackern
     function showScene2() {
         state.currentScene = 2;
         storyEl.textContent =
-`SZENE 2 – Der Bus-Moment
-------------------------
-Corinna sitzt im überfüllten Bus.
-Plötzlich fängt ihre Bluetooth-Box im Rucksack an zu spielen –
-natürlich ein ultra-kitschiges Liebeslied auf voller Lautstärke.
-Alle schauen sie an.
+`SZENE 2 – Flurflackern
+----------------------
+Später läuft Corinna durch den dunklen Flur.
+Nur das Licht im Flur ist an – und natürlich fängt
+genau jetzt die Lampe an zu flackern.
 
-Wie reagiert sie?`;
+Für einen Moment meint sie, am Ende des Flurs
+eine Gestalt zu sehen. Dann ist das Licht aus.
+Als es wieder angeht, ist der Flur leer.
 
-        choice1Btn.textContent = "1) 'Ja, das ist mein Song. Wer mitsingen will, nur zu!'";
-        choice2Btn.textContent = "2) Hektisch alles ausschalten und hoffen, dass niemand sie erkennt.";
-        choice3Btn.textContent = "3) So tun, als wäre der Rucksack nicht ihrer.";
+Die Haustür, von der sie sicher war,
+dass sie zu ist, steht einen Spalt offen.`;
 
-        state.log.push("SZENE 2 – Der Bus-Moment");
-        state.log.push("Frage: Wie reagiert sie im Bus mit der lauten Musik?");
+        choice1Btn.textContent = "1) Corinna geht hin, macht die Tür wieder zu und sagt laut: \"Nein. Einfach nein.\" Dann kontrolliert sie alle Schlösser.";
+        choice2Btn.textContent = "2) Corinna filmt alles mit dem Handy, kommentiert es wie ein billiger Found-Footage-Horrorfilm.";
+        choice3Btn.textContent = "3) Corinna ruft eine Freundin an und bleibt am Telefon, während sie die Wohnung checkt.";
+
+        state.log.push("Szene 2 – Flurflackern");
+        state.log.push("Frage: Was macht Corinna, als Licht und Tür sich creepy verhalten?");
+        state.log.push("");
+        showSceneInfo();
     }
 
+    // 3 – Chat aus dem Nichts
     function showScene3() {
         state.currentScene = 3;
         storyEl.textContent =
-`SZENE 3 – Der falsche Chat
----------------------------
-In einer Pause zückt Corinna ihr Handy.
-Sie schreibt ihrer besten Freundin und lästert kurz über jemanden.
-Die Nachricht landet aus Versehen bei GENAU dieser Person.
+`SZENE 3 – Chat aus dem Nichts
+------------------------------
+Corinna liegt auf dem Sofa und scrollt am Handy.
+Plötzlich bekommt sie eine neue Nachricht von einem
+Kontakt, den es eigentlich nicht mehr gibt:
+Der Chat wurde vor Monaten gelöscht.
 
-Wie rettet sie die Situation?`;
+Der Name steht einfach da: \"Corinna\".
+Ihre eigene Nummer.
 
-        choice1Btn.textContent = "1) 'War nur ein Test, ob du mitliest 😅'";
-        choice2Btn.textContent = "2) Ehrlich entschuldigen.";
-        choice3Btn.textContent = "3) Handy aus, ignorieren, so tun als wäre nie was passiert.";
+Nachricht: \"Du solltest nicht allein sein heute.\"`;
 
-        state.log.push("SZENE 3 – Der falsche Chat");
-        state.log.push("Frage: Wie rettet sie die Situation?");
+        choice1Btn.textContent = "1) Corinna macht einen Screenshot, lacht nervös und schreibt zurück: \"Okay, Vergangenheits-Ich, was weißt du, was ich nicht weiß?\"";
+        choice2Btn.textContent = "2) Corinna blockiert die Nummer sofort, löscht den Chat und legt das Handy weg, als wäre es heiß.";
+        choice3Btn.textContent = "3) Corinna schreibt: \"Cool, dann reden wir mal Klartext.\" und tippt alles auf, was sie sich selbst schon immer sagen wollte.";
+
+        state.log.push("Szene 3 – Chat aus dem Nichts");
+        state.log.push("Frage: Wie reagiert Corinna, als ihr Handy ihr eine Nachricht von 'sich selbst' schickt?");
+        state.log.push("");
+        showSceneInfo();
     }
 
+    // 4 – Spiegelversatz
     function showScene4() {
         state.currentScene = 4;
         storyEl.textContent =
-`SZENE 4 – Der Snack-Unfall
----------------------------
-In der Pause trinkt Corinna etwas und erzählt eine lustige Geschichte.
-Ein Witz ist so gut, dass ihr Getränk aus der Nase kommt.
-Perfekter Slow-Motion-Moment. Alle sehen es.
+`SZENE 4 – Spiegelversatz
+-------------------------
+Im Bad steht Corinna vor dem Spiegel,
+um sich die Haare zu richten.
 
-Wie reagiert sie?`;
+Sie bewegt die Hand – doch ihr Spiegelbild
+zieht minimal verzögert nach. Nur eine halbe Sekunde,
+aber genug, um ihr Herz kurz aus dem Takt zu bringen.
 
-        choice1Btn.textContent = "1) Laut mitlachen, eine Show draus machen.";
-        choice2Btn.textContent = "2) Aufs Klo rennen und sich verstecken.";
-        choice3Btn.textContent = "3) Jemand anderem die Schuld geben: 'Du hast mich zum Lachen gebracht!'";
+Sie blinzelt. Das Spiegelbild auch.
+Dann lächelt sie – und ist sich sicher, dass
+ihr Spiegelbild zuerst grinst.`;
 
-        state.log.push("SZENE 4 – Der Snack-Unfall");
-        state.log.push("Frage: Wie reagiert sie nach dem Getränk-aus-der-Nase-Moment?");
+        choice1Btn.textContent = "1) Corinna winkt, macht dumme Grimassen und wartet, ob der Spiegel irgendwann \"aussteigt\".";
+        choice2Btn.textContent = "2) Corinna fasst den Spiegel an, schaltet das Licht aus/an, prüft, ob es nur an ihr liegt – very rational mode.";
+        choice3Btn.textContent = "3) Corinna sagt ernst in den Spiegel: \"Wenn du mich ersetzen willst, musst du wenigstens meinen Humor klauen.\"";
+
+        state.log.push("Szene 4 – Spiegelversatz");
+        state.log.push("Frage: Was macht Corinna, als ihr Spiegelbild sich nicht ganz normal verhält?");
+        state.log.push("");
+        showSceneInfo();
+    }
+
+    // 5 – Alle starren
+    function showScene5() {
+        state.currentScene = 5;
+        storyEl.textContent =
+`SZENE 5 – Alle starren
+-----------------------
+Corinna steht abends an der Haltestelle.
+Es ist relativ leer, nur ein paar Leute warten.
+
+Für einen Moment haben alle gleichzeitig
+das Handy in der Hand. Dann, wie auf ein
+unsichtbares Kommando, heben sie den Kopf
+und schauen genau in ihre Richtung.
+
+Keiner sagt etwas.
+Nach ein paar Sekunden schauen alle einfach
+wieder weg, als wäre nichts gewesen.`;
+
+        choice1Btn.textContent = "1) Corinna schaut zurück und sagt laut: \"Hab ich was im Gesicht, oder ist das hier eine neue Challenge?\"";
+        choice2Btn.textContent = "2) Corinna tut so, als hätte sie es nicht bemerkt, macht aber heimlich ein Foto von der Situation.";
+        choice3Btn.textContent = "3) Corinna geht ein paar Schritte zur Seite, um zu checken, ob irgendwas hinter ihr ist, das alle sehen.";
+
+        state.log.push("Szene 5 – Alle starren");
+        state.log.push("Frage: Wie reagiert Corinna, als alle gleichzeitig in ihre Richtung schauen?");
+        state.log.push("");
+        showSceneInfo();
+    }
+
+    // 6 – Das Geräusch unter dem Bett
+    function showScene6() {
+        state.currentScene = 6;
+        storyEl.textContent =
+`SZENE 6 – Das Geräusch unter dem Bett
+--------------------------------------
+Es ist spät. Corinna liegt im Bett und versucht,
+die ganzen weirden Momente des Tages zu vergessen.
+
+Dann hört sie unter dem Bett ein leises Kratzen.
+Nicht laut, aber regelmäßig.
+
+Sie starrt an die Decke und spürt, wie ihre
+Fantasie plötzlich sehr aktiv wird.`;
+
+        choice1Btn.textContent = "1) Corinna holt die Taschenlampe am Handy raus, schaut nach und redet dabei laut, um sich selbst zu beruhigen.";
+        choice2Btn.textContent = "2) Corinna zieht einfach die Decke höher, steckt die Füße ein und entscheidet: \"Wenn ich es nicht sehe, sieht es mich auch nicht.\"";
+        choice3Btn.textContent = "3) Corinna stellt eine Sprachnachricht an eine Freundin an, legt das Handy neben sich und kommentiert alles live, während sie nachschaut.";
+
+        state.log.push("Szene 6 – Das Geräusch unter dem Bett");
+        state.log.push("Frage: Wie geht Corinna mit dem finalen \"Da könnte was sein\"-Moment um?");
+        state.log.push("");
+        showSceneInfo();
     }
 
     function showEnd() {
@@ -264,214 +334,138 @@ Wie reagiert sie?`;
         shareBtn.disabled = false;
         copyBtn.disabled = false;
         downloadBtn.disabled = false;
+        sceneInfoEl.textContent = "Auswertung";
 
-        const lines = [];
-        lines.push("===== TAGESFAZIT =====");
-        lines.push(statsString());
-        lines.push("");
-
-        let endingTitle;
-        let endingText;
-
-        if (state.peinlichkeit >= 8) {
-            endingTitle = "ULTRA-CRINGE-ENDE";
-            endingText = [
-                "Jemand hat Corinnas Tag als Cringe-Compilation",
-                "auf TikTok hochgeladen. 2 Millionen Aufrufe.",
-                "Titel: 'Die Königin des Chaos'."
-            ];
-        } else if (state.energie <= -1) {
-            endingTitle = "BURNOUT-ENDE";
-            endingText = [
-                "Corinna ist so durch, dass sie ab einem gewissen Punkt",
-                "nur noch auf Autopilot peinliche Dinge getan hat.",
-                "Vielleicht morgen ein bisschen weniger Drama..."
-            ];
-        } else {
-            const score = state.coolness + state.sympathie - state.peinlichkeit;
-
-            if (score >= 5 && state.peinlichkeit <= 3) {
-                endingTitle = "PERFEKTES ENDE";
-                endingText = [
-                    "Trotz aller peinlichen Momente hat Corinna ihren Tag",
-                    "mit Style, Humor und Sympathie gemeistert.",
-                    "Aus den Szenen werden eher Insider-Witze als Trauma."
-                ];
-            } else if (score >= 0) {
-                endingTitle = "OKAY-ENDE";
-                endingText = [
-                    "Es war chaotisch, es war peinlich, aber hey:",
-                    "in ein paar Wochen erinnert sich niemand mehr so richtig dran.",
-                    "Außer Corinna. Vielleicht."
-                ];
-            } else {
-                endingTitle = "MEH-ENDE";
-                endingText = [
-                    "Es hätte besser laufen können.",
-                    "Aber man wächst ja bekanntlich an seinen Cringe-Momenten.",
-                    "Vielleicht ist morgen ein bisschen weniger Katastrophe."
-                ];
-            }
-        }
-
-        lines.push(endingTitle);
-        lines.push("-".repeat(endingTitle.length));
-        lines.push(...endingText);
-
-        storyEl.textContent = lines.join("\n");
-
-        // auch ins Log
-        state.log.push("===== TAGESFAZIT =====");
-        state.log.push(statsString());
-        state.log.push("");
-        state.log.push(endingTitle);
-        endingText.forEach(l => state.log.push(l));
+        const result = buildResultText();
+        storyEl.textContent = result;
 
         choice1Btn.textContent = "Nochmal spielen";
         choice2Btn.style.display = "none";
         choice3Btn.style.display = "none";
     }
 
+    // --- Antwort-Logik ---
+
     function handleScene1(choice) {
         if (choice === 1) {
-            state.energie -= 1;
-            state.coolness -= 1;
-            state.peinlichkeit += 1;
-            state.sympathie += 1;
-            state.log.push("Antwort: 1) Handy checken.");
+            state.log.push("Antwort: Corinna konfrontiert das 'Spuk-Ding' laut, beendet die Dusche schnell und macht klar, dass sie keinen Nerv dafür hat.");
+            state.log.push("Interpretation: Sie reagiert mit Humor und Konfrontation, wenn sie Angst hat.");
         } else if (choice === 2) {
-            state.energie -= 2;
-            state.coolness += 1;
-            state.peinlichkeit -= 1;
-            state.log.push("Antwort: 2) Ins Bad sprinten.");
+            state.log.push("Antwort: Corinna checkt alles logisch – Wasser, Licht, Bad – und sucht eine realistische Erklärung.");
+            state.log.push("Interpretation: Sie versucht, Horror-Situationen erstmal rational zu entschärfen.");
         } else if (choice === 3) {
-            state.energie += 1;
-            state.coolness -= 2;
-            state.peinlichkeit += 2;
-            state.log.push("Antwort: 3) Snooze drücken.");
+            state.log.push("Antwort: Corinna singt extra laut und tut so, als sei nichts Ungewöhnliches passiert.");
+            state.log.push("Interpretation: Sie überspielt Angst, indem sie sie ignoriert und sich selber beschallt.");
         }
-        state.log.push(statsString("Werte nach Szene 1: "));
         state.log.push("");
+        showScene2();
     }
 
     function handleScene2(choice) {
         if (choice === 1) {
-            state.coolness += 2;
-            state.sympathie += 1;
-            state.peinlichkeit += 1;
-            state.energie -= 1;
-            state.log.push("Antwort: 1) 'Ja, das ist mein Song.'");
+            state.log.push("Antwort: Corinna macht die Tür einfach wieder zu und kontrolliert alle Schlösser.");
+            state.log.push("Interpretation: Sie will Kontrolle zurück – praktische Sicherheit gegen diffuse Angst.");
         } else if (choice === 2) {
-            state.peinlichkeit += 2;
-            state.coolness -= 1;
-            state.energie -= 1;
-            state.log.push("Antwort: 2) Hektisch alles ausschalten.");
+            state.log.push("Antwort: Corinna filmt alles und kommentiert es wie einen Trash-Horrorfilm.");
+            state.log.push("Interpretation: Sie verwandelt Angst in Content und Humor.");
         } else if (choice === 3) {
-            state.sympathie -= 2;
-            state.peinlichkeit += 1;
-            state.coolness += 1;
-            state.log.push("Antwort: 3) So tun, als wäre der Rucksack nicht ihrer.");
+            state.log.push("Antwort: Corinna ruft jemand an und checkt die Wohnung nicht allein.");
+            state.log.push("Interpretation: Sie holt sich Unterstützung, statt tapfer alles solo zu machen.");
         }
-        state.log.push(statsString("Werte nach Szene 2: "));
         state.log.push("");
+        showScene3();
     }
 
     function handleScene3(choice) {
         if (choice === 1) {
-            state.coolness += 1;
-            state.peinlichkeit += 2;
-            state.sympathie -= 1;
-            state.log.push("Antwort: 1) 'War nur ein Test 😅'");
+            state.log.push("Antwort: Corinna schreibt ihrem 'Vergangenheits-Ich' zurück und macht einen Witz daraus.");
+            state.log.push("Interpretation: Sie nutzt Humor, um das Unheimliche zu entwaffnen.");
         } else if (choice === 2) {
-            state.sympathie += 2;
-            state.peinlichkeit += 1;
-            state.coolness -= 1;
-            state.log.push("Antwort: 2) Ehrlich entschuldigen.");
+            state.log.push("Antwort: Corinna blockiert die Nummer sofort und entfernt alles.");
+            state.log.push("Interpretation: Sie schneidet potenziell creepy Dinge lieber direkt ab.");
         } else if (choice === 3) {
-            state.peinlichkeit += 1;
-            state.sympathie -= 2;
-            state.energie += 1;
-            state.log.push("Antwort: 3) Handy aus, ignorieren.");
+            state.log.push("Antwort: Corinna nutzt den Moment, um sich selbst ehrlich Dinge zu schreiben.");
+            state.log.push("Interpretation: Sie dreht Horror in Selbstreflexion um.");
         }
-        state.log.push(statsString("Werte nach Szene 3: "));
         state.log.push("");
+        showScene4();
     }
 
     function handleScene4(choice) {
         if (choice === 1) {
-            state.coolness += 2;
-            state.sympathie += 2;
-            state.peinlichkeit += 1;
-            state.energie -= 1;
-            state.log.push("Antwort: 1) Mitlachen, Show draus machen.");
+            state.log.push("Antwort: Corinna macht Grimassen und testet den Spiegel spielerisch aus.");
+            state.log.push("Interpretation: Sie begegnet dem Unheimlichen neugierig und mit Humor.");
         } else if (choice === 2) {
-            state.peinlichkeit += 1;
-            state.energie += 2;
-            state.sympathie -= 1;
-            state.log.push("Antwort: 2) Aufs Klo rennen.");
+            state.log.push("Antwort: Corinna überprüft Licht, Spiegel und sich selbst möglichst sachlich.");
+            state.log.push("Interpretation: Sie vertraut lieber Technik/Logik als Spuk.");
         } else if (choice === 3) {
-            state.sympathie -= 2;
-            state.peinlichkeit -= 1;
-            state.coolness += 1;
-            state.log.push("Antwort: 3) Jemand anderem die Schuld geben.");
+            state.log.push("Antwort: Corinna spricht den Spiegel direkt an und macht einen frechen Kommentar.");
+            state.log.push("Interpretation: Sie wehrt Angst mit frecher Konfrontation ab.");
         }
-        state.log.push(statsString("Werte nach Szene 4: "));
         state.log.push("");
+        showScene5();
     }
+
+    function handleScene5(choice) {
+        if (choice === 1) {
+            state.log.push("Antwort: Corinna spricht die Situation offen an und macht sie zur halben Comedy-Show.");
+            state.log.push("Interpretation: Sie nimmt Fremdscham-Momente aktiv in die Hand, statt sie zu ertragen.");
+        } else if (choice === 2) {
+            state.log.push("Antwort: Corinna tut, als wäre nichts, dokumentiert es aber heimlich.");
+            state.log.push("Interpretation: Nach außen ruhig, innerlich speichert sie alles als Story ab.");
+        } else if (choice === 3) {
+            state.log.push("Antwort: Corinna checkt zuerst, ob hinter ihr etwas ist, das alle sehen.");
+            state.log.push("Interpretation: Sie glaubt eher an 'irgendwas stimmt hier nicht' als an reine Zufälle.");
+        }
+        state.log.push("");
+        showScene6();
+    }
+
+    function handleScene6(choice) {
+        if (choice === 1) {
+            state.log.push("Antwort: Corinna schaut mit Licht nach und kommentiert alles laut.");
+            state.log.push("Interpretation: Sie hat Angst, aber stellt sich ihr aktiv.");
+        } else if (choice === 2) {
+            state.log.push("Antwort: Corinna versteckt sich unter der Decke und hofft, dass 'es' sie ignoriert.");
+            state.log.push("Interpretation: Klassischer Decken-Instinkt – Vermeidung statt Konfrontation.");
+        } else if (choice === 3) {
+            state.log.push("Antwort: Corinna macht einen Live-Kommentar für eine Freundin, während sie nachschaut.");
+            state.log.push("Interpretation: Sie braucht Verbindung zu jemandem, um sich gruselige Sachen zu trauen.");
+        }
+        state.log.push("");
+        showEnd();
+    }
+
+    // --- Steuerung ---
 
     function handleChoice(choice) {
         if (state.currentScene === 0) {
             showScene1();
-            updateStats();
             return;
         }
-
         if (state.currentScene === -1) {
-            // Neustart
             showIntro();
             return;
         }
 
-        if (state.currentScene === 1) {
-            handleScene1(choice);
-            checkGameOver();
-            if (state.gameOver) {
-                showEnd();
-                updateStats();
-                return;
-            }
-            showScene2();
-        } else if (state.currentScene === 2) {
-            handleScene2(choice);
-            checkGameOver();
-            if (state.gameOver) {
-                showEnd();
-                updateStats();
-                return;
-            }
-            showScene3();
-        } else if (state.currentScene === 3) {
-            handleScene3(choice);
-            checkGameOver();
-            if (state.gameOver) {
-                showEnd();
-                updateStats();
-                return;
-            }
-            showScene4();
-        } else if (state.currentScene === 4) {
-            handleScene4(choice);
-            checkGameOver();
-            showEnd();
-        }
-
-        updateStats();
+        if (state.currentScene === 1) handleScene1(choice);
+        else if (state.currentScene === 2) handleScene2(choice);
+        else if (state.currentScene === 3) handleScene3(choice);
+        else if (state.currentScene === 4) handleScene4(choice);
+        else if (state.currentScene === 5) handleScene5(choice);
+        else if (state.currentScene === 6) handleScene6(choice);
     }
+
+    // --- Ergebnis bauen & teilen ---
 
     function buildResultText() {
         const lines = [];
-        lines.push("Corinnas Chaos-Tag - Ergebnis");
+        lines.push("Corinnas ewiger Fail-Tag – Horror Edition – Auswertung");
         lines.push("Erstellt am: " + new Date().toLocaleString());
+        lines.push("");
+        lines.push("Hinweis:");
+        lines.push("Die Interpretationen sind spielerische Deutungen davon,");
+        lines.push("wie Corinna in den Horror-Fail-Situationen handelt. 👻");
         lines.push("");
         state.log.forEach(l => lines.push(l));
         return lines.join("\n");
@@ -482,11 +476,10 @@ Wie reagiert sie?`;
         if (navigator.share) {
             try {
                 await navigator.share({
-                    title: "Corinnas Chaos-Tag Ergebnis",
-                    text: text
-                });
+                title: "Corinnas Horror-Fail-Tag – Ergebnis",
+                text: text
+            });
             } catch (e) {
-                // abgebrochen oder Fehler
                 console.log(e);
             }
         } else {
@@ -515,7 +508,7 @@ Wie reagiert sie?`;
 
         const now = new Date();
         const pad = n => n.toString().padStart(2, "0");
-        const fileName = `CorinnasChaosTag_${now.getFullYear()}${pad(now.getMonth() + 1)}${pad(now.getDate())}_${pad(now.getHours())}${pad(now.getMinutes())}${pad(now.getSeconds())}.txt`;
+        const fileName = `Corinna_HorrorFailTag_${now.getFullYear()}${pad(now.getMonth() + 1)}${pad(now.getDate())}_${pad(now.getHours())}${pad(now.getMinutes())}${pad(now.getSeconds())}.txt`;
 
         const a = document.createElement("a");
         a.href = url;
@@ -526,16 +519,28 @@ Wie reagiert sie?`;
         URL.revokeObjectURL(url);
     }
 
-    // Event-Handler
-    choice1Btn.addEventListener("click", () => handleChoice(1));
-    choice2Btn.addEventListener("click", () => handleChoice(2));
-    choice3Btn.addEventListener("click", () => handleChoice(3));
-    shareBtn.addEventListener("click", shareResult);
-    copyBtn.addEventListener("click", copyResult);
-    downloadBtn.addEventListener("click", downloadResult);
+    // Init nach DOM-Load
+    function init() {
+        storyEl      = document.getElementById("story");
+        sceneInfoEl  = document.getElementById("sceneInfo");
+        choice1Btn   = document.getElementById("choice1");
+        choice2Btn   = document.getElementById("choice2");
+        choice3Btn   = document.getElementById("choice3");
+        shareBtn     = document.getElementById("shareBtn");
+        copyBtn      = document.getElementById("copyBtn");
+        downloadBtn  = document.getElementById("downloadBtn");
 
-    // Start
-    showIntro();
+        choice1Btn.addEventListener("click", () => handleChoice(1));
+        choice2Btn.addEventListener("click", () => handleChoice(2));
+        choice3Btn.addEventListener("click", () => handleChoice(3));
+        shareBtn.addEventListener("click", shareResult);
+        copyBtn.addEventListener("click", copyResult);
+        downloadBtn.addEventListener("click", downloadResult);
+
+        showIntro();
+    }
+
+    window.addEventListener("DOMContentLoaded", init);
 </script>
 </body>
 </html>
